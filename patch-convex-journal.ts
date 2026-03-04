@@ -144,9 +144,18 @@ if (cmd === "run" && func && func.includes(":")) {
 
 				let bundled = result.outputFiles[0].text;
 
-				const importLines = (bundled.match(/^import .+$/gm) || []).join("\\n");
 				let minimal = extractMinimalCode(bundled, name);
 				minimal = cleanCode(minimal, opNum, name);
+
+				// Filter imports to only those actually used in minimal code
+				const importLines = (bundled.match(/^import .+$/gm) || [])
+					.filter(line => {
+						const match = line.match(/import \\{ ([^}]+) \\}/);
+						if (!match) return true; // keep non-destructured imports
+						const names = match[1].split(",").map(s => s.trim().split(" ")[0]);
+						return names.some(n => minimal.includes(n));
+					})
+					.join("\\n");
 
 				// Append operation with its own imports
 				const block = "// operation" + opNum + " (" + file + ":" + name + ")\\n" + importLines + "\\n\\n" + minimal;

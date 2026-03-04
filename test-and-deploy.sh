@@ -4,7 +4,7 @@ set -o errexit -o nounset -o pipefail -o noclobber
 
 project_name=$(node --print "require('./package.json').name")
 
-npx convex codegen --typecheck=enable
+npx convex dev --once --typecheck=enable
 bash scripts/validate-code.sh
 
 bash scripts/build-frontend.sh
