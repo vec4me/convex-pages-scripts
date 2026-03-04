@@ -1,0 +1,12 @@
+{
+	"entry": [
+		"frontend/main.tsx",
+		"backend/*.ts",
+		"scripts/*.ts",
+		"scripts/*.js"
+	],
+	"ignore": ["backend/_*", "backend/_*/**"],
+	"ignoreDependencies": ["@biomejs/biome"],
+	"ignoreExportsUsedInFile": false,
+	"includeEntryExports": true
+}

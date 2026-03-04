@@ -1,0 +1,77 @@
+engine biome(1.0)
+language js
+
+or {
+	// no-as-cast to object/generic types (excludes "as const" and simple identifiers)
+	`$expr as $type` as $full where {
+		not { $full <: `$_ as const` },
+		or { $type <: contains `<`, $type <: contains `{` },
+		register_diagnostic(span=$full, message="no-as-cast: Type assertions (as) found. Fix types or extract to named function.")
+	},
+	// no-optional-property
+	TsPropertySignatureTypeMember() as $prop where {
+		$prop <: contains r"\?",
+		register_diagnostic(span=$prop, message="no-optional-property: Use explicit nullability (name: Type | null).")
+	},
+	// no-inline-object in property signatures
+	TsPropertySignatureTypeMember() as $prop where {
+		$prop <: contains TsObjectType(),
+		register_diagnostic(span=$prop, message="no-inline-object: Extract inline types to named interfaces.")
+	},
+	// no-inline-object in function parameters
+	JsFormalParameter() as $param where {
+		$param <: contains TsObjectType(),
+		register_diagnostic(span=$param, message="no-inline-object: Extract inline types to named interfaces.")
+	},
+	// no-inline-object in return types
+	TsReturnTypeAnnotation() as $ret where {
+		$ret <: contains TsObjectType(),
+		register_diagnostic(span=$ret, message="no-inline-object: Extract inline types to named interfaces.")
+	},
+	// no-simple-type-alias (type A = B is not allowed - just renaming a type)
+	`type $name = $type` as $decl where {
+		$type <: r"^[A-Z][a-zA-Z0-9]*$",
+		register_diagnostic(span=$decl, message="no-simple-type-alias: Don't rename types. Use the original type directly.")
+	},
+	// no-interface-extends (define explicit interfaces, don't inherit)
+	TsInterfaceDeclaration() as $decl where {
+		$decl <: contains TsExtendsClause(),
+		register_diagnostic(span=$decl, message="no-interface-extends: Define explicit interfaces instead of using extends.")
+	},
+	// no-intersection-type (allows branded types: primitive & something)
+	TsIntersectionType() as $inter where {
+		not { $inter <: contains `string` },
+		not { $inter <: contains `number` },
+		not { $inter <: contains `bigint` },
+		not { $inter <: contains `boolean` },
+		not { $inter <: contains `symbol` },
+		register_diagnostic(span=$inter, message="no-intersection-type: Define explicit types instead of using intersection (&).")
+	},
+	// no-spread-operator
+	JsSpread() as $spread where {
+		register_diagnostic(span=$spread, message="no-spread: Avoid spread operator. Assign properties explicitly.")
+	},
+	// no-shorthand-property (require explicit key: value syntax)
+	JsShorthandPropertyObjectMember() as $prop where {
+		register_diagnostic(span=$prop, message="no-shorthand-property: Use explicit key: value syntax (e.g., { foo: foo } instead of { foo }).")
+	},
+	// no-utility-types (Omit, Pick, Partial, etc. - define explicit interfaces instead)
+	TsTypeAnnotation() as $ann where {
+		or {
+			$ann <: contains `Omit<`,
+			$ann <: contains `Pick<`,
+			$ann <: contains `Partial<`,
+			$ann <: contains `Required<`
+		},
+		register_diagnostic(span=$ann, message="no-utility-types: Avoid Omit/Pick/Partial/Required. Define explicit interfaces instead.")
+	},
+	TsReturnTypeAnnotation() as $ret where {
+		or {
+			$ret <: contains `Omit<`,
+			$ret <: contains `Pick<`,
+			$ret <: contains `Partial<`,
+			$ret <: contains `Required<`
+		},
+		register_diagnostic(span=$ret, message="no-utility-types: Avoid Omit/Pick/Partial/Required. Define explicit interfaces instead.")
+	}
+}

@@ -1,31 +1,32 @@
-set -o errexit -o nounset -o pipefail
-cd "$(dirname "$0")/.."
+set -o errexit -o nounset -o pipefail -o noclobber
 
 : "${DIST_DIR:=dist}"
 
-project_name=$(node -p "require('./package.json').name")
+project_name=$(node --print "require('./package.json').name")
 
-npx convex codegen --typecheck enable
-npx tsc --noEmit
-npx biome check
-npx knip
+npx convex codegen --typecheck=enable
+bash scripts/validate-code.sh
 
-npx rsbuild build
+bash scripts/build-frontend.sh
 
-npx convex deploy --dry-run --yes
+npx convex deploy --dry-run --yes --typecheck=enable
 
 npx wrangler pages deploy "$DIST_DIR" --project-name="$project_name"
-npx convex deploy --yes
+npx convex deploy --yes --typecheck=enable
 
-if [[ -f backend/journal.ts ]]; then
-	operations=$(grep --only-matching 'operation[0-9]*' backend/journal.ts | sort --unique --version-sort)
-	count=$(echo "$operations" | wc --lines)
+if [[ -f backend/_journal.ts ]]; then
+	operations=$(grep --only-matching 'operation[0-9]*' backend/_journal.ts | sort --unique --version-sort || true)
+	if [[ -z "$operations" ]]; then
+		echo "No journal operations found, skipping replay."
+	else
+		count=$(echo "$operations" | wc --lines)
 
-	echo "Replaying $count journal operations..."
-	for operation in $operations; do
-		echo "  $operation"
-		npx convex run --prod "journal:$operation"
-	done
+		echo "Replaying $count journal operations..."
+		for operation in $operations; do
+			echo "  $operation"
+			npx convex run --prod "_journal:$operation"
+		done
 
-	mv backend/journal.ts "backend/journal.$(date +%Y%m%d%H%M%S).ts.bak"
+		mv backend/_journal.ts "backend/_journal.$(date +%Y%m%d%H%M%S).bak.ts"
+	fi
 fi
