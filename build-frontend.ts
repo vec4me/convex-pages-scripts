@@ -6,8 +6,8 @@ import { solidPlugin } from "esbuild-plugin-solid";
 const isWatch = process.argv.includes("--watch");
 
 // Ensure dist exists
-if (!existsSync("dist")) {
-	mkdirSync("dist");
+if (!existsSync("dist/")) {
+	mkdirSync("dist/");
 }
 
 // Generate HTML
@@ -33,7 +33,7 @@ writeFileSync(
 const config: BuildOptions = {
 	entryPoints: ["frontend/main.tsx"],
 	bundle: true,
-	outdir: "dist",
+	outdir: "dist/",
 	format: "esm",
 	platform: "browser",
 	target: "es2020",
@@ -55,7 +55,7 @@ const config: BuildOptions = {
 if (isWatch) {
 	const ctx = await context(config);
 	await ctx.watch();
-	await ctx.serve({ servedir: "dist", port: 3000 });
+	await ctx.serve({ servedir: "dist/", port: 3000 });
 	console.log("Serving at http://localhost:3000");
 } else {
 	await build(config);

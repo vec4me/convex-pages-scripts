@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"type": "module",
 	"scripts": {
-		"postinstall": "tsx scripts/patch-convex-journal.ts"
+		"postinstall": "bash scripts/patch-convex-journal.sh"
 	},
 	"dependencies": {
 		"@solidjs/router": "^0.15.4",

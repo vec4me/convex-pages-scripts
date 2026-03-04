@@ -98,7 +98,7 @@ const rules = extractRules(schema);
 
 const config = {
 	$schema: schemaUrl,
-	plugins: ["./biome-rules.grit"],
+	plugins: ["biome-rules.grit"],
 	vcs: {
 		enabled: true,
 		clientKind: "git",

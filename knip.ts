@@ -9,7 +9,7 @@ const config: KnipConfig = {
 		"!backend/_*",
 	],
 	project: ["**/*.ts", "**/*.tsx"],
-	ignoreDependencies: ["@biomejs/biome"],
+	ignoreDependencies: ["@biomejs/biome", "tsx"],
 	ignore: [
 		// Files/folders starting with underscore
 		"**/_*/**",

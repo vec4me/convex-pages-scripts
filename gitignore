@@ -2,5 +2,4 @@ node_modules/
 dist/
 .env.local
 backend/README.md
-backend/_journal.ts
-backend/_journal.[0-9]*.ts
+_journal/
