@@ -3,4 +3,4 @@ dist/
 .env.local
 backend/README.md
 backend/_journal.ts
-backend/_journal.*.bak.ts
+backend/_journal.[0-9]*.ts

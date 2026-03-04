@@ -27,6 +27,6 @@ if [[ -f backend/_journal.ts ]]; then
 			npx convex run --prod "_journal:$operation"
 		done
 
-		mv backend/_journal.ts "backend/_journal.$(date +%Y%m%d%H%M%S).bak.ts"
+		mv backend/_journal.ts "backend/_journal.$(date +%Y.%m.%d.%H:%M:%S).ts"
 	fi
 fi
