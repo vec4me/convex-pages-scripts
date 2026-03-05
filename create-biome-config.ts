@@ -23,6 +23,7 @@ const off = new Set([
 	"style/useConsistentObjectDefinitions",
 	"style/useExportsLast",
 	"suspicious/noConsole",
+	"suspicious/noBitwiseOperators",
 	"nursery/useDestructuring",
 	"nursery/noContinue",
 	"nursery/noExcessiveLinesPerFile",
