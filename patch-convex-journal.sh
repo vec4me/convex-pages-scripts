@@ -23,8 +23,8 @@ if (cmd === "run" && func?.includes(":")) {
 
 	if (!file.startsWith("_journal") && name.startsWith("migrate") && existsSync("backend/" + file + ".ts")) {
 		const src = readFileSync("backend/" + file + ".ts", "utf-8");
-		if (src.includes("mutation(")) {
-			const ts = new Date().toISOString().replace(/[T:]/g, ".").replace(/-/g, ".").slice(0, 19);
+		if (src.includes("mutation(") || src.includes("internalMutation(")) {
+			const ts = new Date().toISOString().replace("T", ".").replace(/-/g, ".").slice(0, 19);
 			const dir = "_journal/" + ts + "/";
 
 			mkdirSync(dir, { recursive: true });
@@ -39,7 +39,7 @@ if (cmd === "run" && func?.includes(":")) {
 				bundle: true,
 				outdir: dir,
 				format: "esm",
-				platform: "neutral",
+				platform: "node",
 				external: ["convex/*"],
 				minify: false,
 			});

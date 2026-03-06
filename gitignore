@@ -3,3 +3,5 @@ dist/
 .env.local
 backend/README.md
 _journal/
+android/
+ios/

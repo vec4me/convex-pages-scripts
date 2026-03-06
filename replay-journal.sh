@@ -27,7 +27,7 @@ for POINTER in $PENDING; do
 	cp --recursive "$JOURNAL_DIR$TS/" "$TEMP_DIR/backend/"
 
 	# Deploy from snapshot
-	(cd "$TEMP_DIR" && npx convex deploy --yes)
+	(cd "$TEMP_DIR" && npx convex deploy --yes --commit-dirty=true)
 
 	# Run the migration
 	npx convex run --prod "$FILE:$NAME"
