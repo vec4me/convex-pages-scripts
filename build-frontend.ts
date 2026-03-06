@@ -1,34 +1,12 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { gzipSync } from "node:zlib";
 import { type BuildOptions, build, context } from "esbuild";
 import { solidPlugin } from "esbuild-plugin-solid";
 
 const isWatch = process.argv.includes("--watch");
 
-// Ensure dist exists
-if (!existsSync("dist/")) {
-	mkdirSync("dist/");
-}
-
-// Generate HTML
-writeFileSync(
-	"dist/index.html",
-	`<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SplitUp</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💸</text></svg>">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
-  <link rel="stylesheet" href="/main.css">
-</head>
-<body>
-  <div id="root"></div>
-  <script type="module" src="/main.js"></script>
-</body>
-</html>`,
-);
+mkdirSync("dist/", { recursive: true });
+copyFileSync("frontend/index.html", "dist/index.html");
 
 const config: BuildOptions = {
 	entryPoints: ["frontend/main.tsx"],
@@ -40,15 +18,12 @@ const config: BuildOptions = {
 	plugins: [solidPlugin()],
 	loader: { ".css": "css" },
 	minify: true,
-	sourcemap: false,
 	logLevel: "warning",
-	logLimit: 0,
-	treeShaking: true,
 	drop: ["console", "debugger"],
 	legalComments: "none",
 	define: {
 		"process.env.NODE_ENV": JSON.stringify("production"),
-		"process.env.CONVEX_URL": JSON.stringify(process.env.CONVEX_URL ?? ""),
+		"import.meta.env.CONVEX_URL": JSON.stringify(process.env.CONVEX_URL ?? ""),
 	},
 };
 
