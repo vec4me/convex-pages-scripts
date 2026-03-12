@@ -9,6 +9,7 @@ const off = new Set([
 	"complexity/noExcessiveCognitiveComplexity",
 	"complexity/noExcessiveLinesPerFunction",
 	"complexity/noVoid",
+	"complexity/useMaxParams",
 	"correctness/noNodejsModules",
 	"correctness/noProcessGlobal",
 	"correctness/useImportExtensions",

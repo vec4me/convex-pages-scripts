@@ -15,7 +15,6 @@ trap 'rm --recursive --force "$TEMP_DIR"' EXIT
 # Copy required files for Convex deployment
 cp convex.json "$TEMP_DIR/"
 cp package.json "$TEMP_DIR/"
-cp .env.local "$TEMP_DIR/" 2>/dev/null || true
 ln --symbolic "$PWD/node_modules" "$TEMP_DIR/node_modules"
 
 for POINTER in $PENDING; do
@@ -27,10 +26,10 @@ for POINTER in $PENDING; do
 	cp --recursive "$JOURNAL_DIR$TS/" "$TEMP_DIR/backend/"
 
 	# Deploy from snapshot
-	(cd "$TEMP_DIR" && npx convex deploy --yes)
+	(cd "$TEMP_DIR" && CONVEX_DEPLOYMENT="${CONVEX_DEPLOYMENT_PROD}" npx convex deploy --yes)
 
 	# Run the migration
-	npx convex run --prod "$FILE:$NAME"
+	CONVEX_DEPLOYMENT="${CONVEX_DEPLOYMENT_PROD}" npx convex run --prod "$FILE:$NAME"
 
 	# Mark as finished
 	mv "$POINTER" "$JOURNAL_DIR$TS.finished.json"

@@ -73,10 +73,5 @@ or {
 			$ret <: contains `Required<`
 		},
 		register_diagnostic(span=$ret, message="no-utility-types: Avoid Omit/Pick/Partial/Required. Define explicit interfaces instead.")
-	},
-	// no-convex-query (use realtime subscriptions instead of one-off queries)
-	JsStaticMemberExpression() as $expr where {
-		$expr <: `convex.query`,
-		register_diagnostic(span=$expr, message="no-convex-query: Use realtime subscriptions (onUpdate) instead of convex.query.")
 	}
 }

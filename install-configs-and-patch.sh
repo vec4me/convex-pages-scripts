@@ -15,4 +15,7 @@ echo '/* /index.html 200' >| public/_redirects
 
 npx tsx scripts/create-biome-config.ts
 
+bash scripts/patch-convex-journal.sh
+bash scripts/patch-convex-no-envfile.sh
+
 echo "Done."

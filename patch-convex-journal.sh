@@ -11,19 +11,22 @@ if grep --quiet "JOURNAL_PATCHED" "$TARGET"; then
 	exit 0
 fi
 
-cat > "$TARGET" << 'PATCH'
+cat >| "$TARGET" << 'PATCH'
 #!/usr/bin/env node
 // JOURNAL_PATCHED
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { build } from "esbuild";
 
-const [cmd, func] = process.argv.slice(2);
-if (cmd === "run" && func?.includes(":")) {
+const args = process.argv.slice(2);
+const cmd = args[0];
+const func = args.find(a => !a.startsWith("-") && a.includes(":") && a !== cmd);
+if (cmd === "run" && func) {
 	const [file, name] = func.split(":");
 
-	if (!file.startsWith("_journal") && name.startsWith("migrate") && existsSync("backend/" + file + ".ts")) {
+	if (!args.includes("--prod") && !file.startsWith("_journal") && existsSync("backend/" + file + ".ts")) {
 		const src = readFileSync("backend/" + file + ".ts", "utf-8");
-		if (src.includes("mutation(") || src.includes("internalMutation(")) {
+		const funcRegex = new RegExp("export\\s+const\\s+" + name + "\\s*=\\s*(mutation|internalMutation)\\s*\\(");
+		if (funcRegex.test(src)) {
 			const ts = new Date().toISOString().replace("T", ".").replace(/-/g, ".").slice(0, 19);
 			const dir = "_journal/" + ts + "/";
 

@@ -3,13 +3,15 @@ import { createServer } from "node:http";
 import { context } from "esbuild";
 import { config, setupDist } from "./frontend-config.ts";
 
+process.env.CONVEX_DEPLOYMENT = process.env.CONVEX_DEPLOYMENT_DEV;
+
 setupDist();
 
 watch("frontend/", { recursive: true }, () => setupDist());
 watch("public/", { recursive: true }, () => setupDist());
 watch("shared/", { recursive: true }, () => setupDist());
 
-const ctx = await context(config);
+const ctx = await context(config());
 await ctx.watch();
 const srv = await ctx.serve({ servedir: "dist/" });
 const base = `http://${srv.host || "127.0.0.1"}:${srv.port}`;
