@@ -1,7 +1,8 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { basename } from "node:path";
+import { basename, relative } from "node:path";
 
 const name = basename(process.cwd());
+const scriptsDir = relative(process.cwd(), import.meta.dirname);
 if (!/^[a-z0-9-]+$/u.test(name)) {
 	console.error(
 		`Invalid folder name: "${name}" (only lowercase letters, numbers, and hyphens allowed)`,
@@ -14,7 +15,7 @@ const template = {
 	version: "1.0.0",
 	type: "module",
 	scripts: {
-		postinstall: "bash scripts/install-configs-and-patch.sh",
+		postinstall: `bash ${scriptsDir}/install-configs-and-patch.sh`,
 	},
 	dependencies: {
 		convex: "^1.32.0",

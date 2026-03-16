@@ -1,22 +1,57 @@
-import type { KnipConfig } from "knip";
+import { readFileSync, readdirSync } from "node:fs";
+import { dirname, relative } from "node:path";
 
-const config: KnipConfig = {
-	entry: [
-		"frontend/main.tsx",
-		"scripts/*.ts",
-		// Convex backend files are entry points (exports consumed by Convex runtime)
-		"backend/*.ts",
-		"!backend/_*",
-	],
+// When this file runs from its source dir, scriptsDir is correct.
+// When it runs as a copy at project root, derive from package.json postinstall.
+const ownDir = relative(process.cwd(), import.meta.dirname);
+const scriptsDir =
+	ownDir ||
+	dirname(
+		JSON.parse(readFileSync("package.json", "utf-8")).scripts.postinstall.split(
+			" ",
+		)[1],
+	);
+
+const CORE_DIRS = new Set([
+	"frontend",
+	"backend",
+	"shared",
+	"public",
+	scriptsDir,
+]);
+
+function hasTypeScriptFiles(dir: string): boolean {
+	try {
+		return readdirSync(dir).some(
+			(f) => f.endsWith(".ts") || f.endsWith(".tsx"),
+		);
+	} catch {
+		return false;
+	}
+}
+
+const toolEntries = readdirSync(".", { withFileTypes: true })
+	.filter(
+		(d) =>
+			d.isDirectory() &&
+			!d.name.startsWith(".") &&
+			!d.name.startsWith("node_modules") &&
+			!CORE_DIRS.has(d.name) &&
+			hasTypeScriptFiles(d.name),
+	)
+	.map((d) => `${d.name}/**/*.ts`);
+
+const config: Record<string, unknown> = {
+	entry: (
+		[
+			"frontend/main.tsx",
+			"backend/_generated/api.d.ts",
+			`${scriptsDir}/*.ts`,
+		] as string[]
+	).concat(toolEntries),
 	project: ["**/*.ts", "**/*.tsx"],
 	ignoreDependencies: ["@biomejs/biome", "tsx"],
-	ignore: [
-		// Files/folders starting with underscore
-		"**/_*/**",
-		// Type declaration files
-		"**/*.d.ts",
-	],
-	// Strict: all issue types are errors (not warnings or off)
+	ignore: ["**/*.d.ts", "backend/schema.ts"],
 	rules: {
 		files: "error",
 		dependencies: "error",

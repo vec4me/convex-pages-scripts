@@ -13,7 +13,7 @@ watch("shared/", { recursive: true }, () => setupDist());
 
 const ctx = await context(config());
 await ctx.watch();
-const srv = await ctx.serve({ servedir: "dist/" });
+const srv = await ctx.serve({ servedir: ".dist/" });
 const base = `http://${srv.host || "127.0.0.1"}:${srv.port}`;
 
 createServer(async (req, res) => {

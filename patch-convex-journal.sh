@@ -23,12 +23,12 @@ const func = args.find(a => !a.startsWith("-") && a.includes(":") && a !== cmd);
 if (cmd === "run" && func) {
 	const [file, name] = func.split(":");
 
-	if (!args.includes("--prod") && !file.startsWith("_journal") && existsSync("backend/" + file + ".ts")) {
+	if (!args.includes("--prod") && !file.startsWith(".journal") && existsSync("backend/" + file + ".ts")) {
 		const src = readFileSync("backend/" + file + ".ts", "utf-8");
 		const funcRegex = new RegExp("export\\s+const\\s+" + name + "\\s*=\\s*(mutation|internalMutation)\\s*\\(");
 		if (funcRegex.test(src)) {
 			const ts = new Date().toISOString().replace("T", ".").replace(/-/g, ".").slice(0, 19);
-			const dir = "_journal/" + ts + "/";
+			const dir = ".journal/" + ts + "/";
 
 			mkdirSync(dir, { recursive: true });
 
@@ -51,7 +51,7 @@ if (cmd === "run" && func) {
 			cpSync("backend/schema.ts", dir + "schema.ts");
 
 			// Write pointer
-			writeFileSync("_journal/" + ts + ".pending.json", JSON.stringify({ file, name }));
+			writeFileSync(".journal/" + ts + ".pending.json", JSON.stringify({ file, name }));
 
 			console.log("📝 " + ts);
 		}

@@ -1,21 +1,23 @@
 set -o errexit -o nounset -o pipefail -o noclobber
 
+DIR="$(dirname "$0")"
+
 echo "Installing config files..."
 
-npx tsx scripts/install-package.ts
-cp scripts/tsconfig.json frontend/tsconfig.json
-cp scripts/tsconfig.json backend/tsconfig.json
-cp scripts/knip.ts knip.ts
-cp scripts/convex.json convex.json
-cp scripts/biome-rules.grit biome-rules.grit
-cp scripts/stylelint.config.js stylelint.config.js
-cp scripts/gitignore .gitignore
+npx tsx "$DIR/install-package.ts"
+cp "$DIR/tsconfig.json" frontend/tsconfig.json
+cp "$DIR/tsconfig.json" backend/tsconfig.json
+cp "$DIR/knip.ts" knip.ts
+cp "$DIR/convex.json" convex.json
+cp "$DIR/biome-rules.grit" biome-rules.grit
+cp "$DIR/stylelint.config.js" stylelint.config.js
+cp "$DIR/gitignore" .gitignore
 mkdir --parents public
 echo '/* /index.html 200' >| public/_redirects
 
-npx tsx scripts/create-biome-config.ts
+npx tsx "$DIR/create-biome-config.ts"
 
-bash scripts/patch-convex-journal.sh
-bash scripts/patch-convex-no-envfile.sh
+bash "$DIR/patch-convex-journal.sh"
+bash "$DIR/patch-convex-no-envfile.sh"
 
 echo "Done."

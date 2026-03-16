@@ -108,7 +108,7 @@ const config = {
 		useIgnoreFile: true,
 	},
 	files: {
-		includes: ["**", "!!**/dist", "!!**/_*"],
+		includes: ["**"],
 	},
 	formatter: {
 		enabled: true,
