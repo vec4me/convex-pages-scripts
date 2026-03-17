@@ -1,6 +1,6 @@
 import { writeFileSync } from "node:fs";
 
-const schemaUrl = "https://biomejs.dev/schemas/2.4.5/schema.json";
+const schemaUrl = "https://biomejs.dev/schemas/2.4.7/schema.json";
 
 const off = new Set([
 	"a11y/noNoninteractiveElementInteractions",
@@ -108,7 +108,7 @@ const config = {
 		useIgnoreFile: true,
 	},
 	files: {
-		includes: ["**"],
+		includes: ["**", "!**/convex/_generated/**"],
 	},
 	formatter: {
 		enabled: true,
@@ -142,6 +142,9 @@ const config = {
 		},
 	},
 	css: {
+		parser: {
+			tailwindDirectives: true,
+		},
 		formatter: {
 			enabled: true,
 		},

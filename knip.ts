@@ -50,7 +50,7 @@ const config: Record<string, unknown> = {
 		] as string[]
 	).concat(toolEntries),
 	project: ["**/*.ts", "**/*.tsx"],
-	ignoreDependencies: ["@biomejs/biome", "tsx"],
+	ignoreDependencies: ["@biomejs/biome", "tailwindcss", "tsx"],
 	ignore: ["**/*.d.ts", "backend/schema.ts"],
 	rules: {
 		files: "error",

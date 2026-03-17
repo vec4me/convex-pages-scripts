@@ -15,7 +15,7 @@ const template = {
 	version: "1.0.0",
 	type: "module",
 	scripts: {
-		postinstall: `bash ${scriptsDir}/install-configs-and-patch.sh`,
+		postinstall: `bash ${scriptsDir}/create-configs-and-patch.sh`,
 	},
 	dependencies: {
 		convex: "^1.32.0",

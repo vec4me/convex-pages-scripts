@@ -1,6 +1,7 @@
 import { copyFileSync, cpSync, mkdirSync } from "node:fs";
 import type { BuildOptions } from "esbuild";
 import { solidPlugin } from "esbuild-plugin-solid";
+import tailwindcss from "esbuild-plugin-tailwindcss";
 
 const DEPLOYMENT_PREFIX_REGEX = /^\w+:/u;
 
@@ -17,8 +18,7 @@ export const config = (): BuildOptions => ({
 	format: "esm",
 	platform: "browser",
 	target: "es2020",
-	plugins: [solidPlugin()],
-	loader: { ".css": "css" },
+	plugins: [solidPlugin(), tailwindcss()],
 	minify: true,
 	logLevel: "warning",
 	drop: ["console", "debugger"],
