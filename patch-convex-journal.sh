@@ -8,6 +8,7 @@ if [[ ! -f "$TARGET" ]]; then
 fi
 
 if grep -q "JOURNAL_PATCHED" "$TARGET"; then
+	echo "Already patched"
 	exit 0
 fi
 

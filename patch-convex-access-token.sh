@@ -7,11 +7,13 @@ if (!fs.existsSync(path)) { console.log("Convex not installed yet, skipping patc
 let src = fs.readFileSync(path, "utf-8");
 if (src.includes("ACCESS_TOKEN_PATCHED")) { console.log("Already patched"); process.exit(0); }
 
-const target = "function readGlobalConfig(ctx) {\n  const configPath = globalConfigPath();";
-if (!src.includes(target)) { console.error("Cannot find readGlobalConfig in convex bundle — patch needs updating"); process.exit(1); }
+// Use regex to handle parameter names changing between convex versions
+const regex = /function readGlobalConfig\((\w+)\) \{\n  const configPath = globalConfigPath\(\);/;
+const match = src.match(regex);
+if (!match) { console.error("Cannot find readGlobalConfig in convex bundle — patch needs updating"); process.exit(1); }
 src = src.replace(
-  target,
-  "function readGlobalConfig(ctx) { /* ACCESS_TOKEN_PATCHED */ if (process.env.CONVEX_ACCESS_TOKEN) return { accessToken: process.env.CONVEX_ACCESS_TOKEN };\n  const configPath = globalConfigPath();"
+  match[0],
+  "function readGlobalConfig(" + match[1] + ") { /* ACCESS_TOKEN_PATCHED */ if (process.env.CONVEX_ACCESS_TOKEN) return { accessToken: process.env.CONVEX_ACCESS_TOKEN };\n  const configPath = globalConfigPath();"
 );
 
 fs.writeFileSync(path, src);
