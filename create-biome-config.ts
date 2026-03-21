@@ -1,7 +1,9 @@
 import { execSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 
-const version = execSync("npx biome --version", { encoding: "utf-8" })
+const version = execSync("npx @biomejs/biome --version", {
+	encoding: "utf-8",
+})
 	.trim()
 	.replace("Version: ", "");
 const schemaUrl = `https://biomejs.dev/schemas/${version}/schema.json`;
